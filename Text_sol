@@ -1,3 +1,35 @@
+поиск 
+
+
+
+private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < DoctorsDGV.RowCount; i++)
+            {
+                for (int j = 0; j < DoctorsDGV.ColumnCount; j++)
+                {
+                    DoctorsDGV[j, i].Style.BackColor = Color.White;
+                    DoctorsDGV[j, i].Style.ForeColor = Color.Black;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                DoctorsDGV.ClearSelection();
+                for (int i = 0; i < DoctorsDGV.RowCount - 1; i++)
+                {
+                    for (int j = 0; j < DoctorsDGV.ColumnCount; j++)
+                    {
+                        if (DoctorsDGV[j, i].Value.ToString().ToLower().Contains(textBox1.Text.ToLower()))
+                        {
+                            DoctorsDGV[j, i].Style.BackColor = Color.Black;
+                            DoctorsDGV[j, i].Style.ForeColor = Color.White;
+                        }
+                    }
+                }
+            }
+        }
+
 
 
 ЗАПОЛНЕНИЕ DGW
