@@ -1,3 +1,46 @@
+сортировка + кнопка очистить 
+
+
+private void buttonSort_Click(object sender, EventArgs e)
+        {
+            var COL = new System.Windows.Forms.DataGridViewColumn();
+
+            switch (comboBox1.SelectedItem.ToString())
+            {
+                case "Специальность":
+                    COL = DoctorsDGV.Columns["DOCSPEC"];
+                    break;
+                case "Опыт":
+                    COL = DoctorsDGV.Columns["DOCEXP"];
+                    break;
+                case "Имя":
+
+                    COL = DoctorsDGV.Columns["DocName"];
+                    break;
+            }
+            if (radioButtonUp.Checked)
+            {
+                DoctorsDGV.Sort(COL, System.ComponentModel.ListSortDirection.Ascending);
+            }
+            else
+            {
+                DoctorsDGV.Sort(COL, System.ComponentModel.ListSortDirection.Descending);
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            DisplayDoc(Query);
+            buttonSort.Enabled = true;
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            DisplayDoc(Query + " where DOCGEN=N'" + comboBox2.SelectedItem.ToString() + "'");
+            buttonSort.Enabled = false;
+        }
+
+
 поиск 
 
 
