@@ -1,3 +1,72 @@
+«Application.Resources>
+«!--цвета приложения для соответсвия стилю-->
+«SolidColorBrush x:Key="nain" Color-O°#FFF"/>
+«SolidColorBrush x:Key="additional* Color=" FFETFABF"/>
+«SolidColor&rush x:Key="akcent* Color=m"aFFOUAOFF"/>
+<!--Стиль для окна-->
+«Style TargetType="Window" x:Key="base_window">
+«Setter Property="FontFanily" Values Conic Sans MS'/>
+«Setter Property="FontSize* Value="14"/>
+«Setter Property="MinHeight" Values 600"/>
+«Setter Property "Minidth" Values 800"/>
+</Style»
+«Setter Property "Background" Value w" (StaticResource main)"/>
+<!--стиль для страницы--
+«Style TargetType="Page" *:Key="base_page">
+«Setter Property="FontFanily" Value= Conic Sans MS"/>
+«Setter Property="Background" Value=" (StaticResource main)*/>
+«Setter Property="FontSize Value= 14"/>
+</Styles
+<!--стиль для полей ввода TextBox-->
+«Style TargetType:"TextBox">
+«Setter Property="Height" Value="30"/>
+«Setter Property="VerticalAlignment" Values Stretch*/>
+«Setter Property="VerticalContentAlignnent Value="Center"/>
+«Setter Property="Padding" Value="3 0"/>
+«Setter Property="Background" Value=O" (StaticResource nain)"/>
+</Style»
+<!--стиль для полей кнопок Button-->
+«Style TargetTypes "Button",
+«Setter Property 'width" Value="auto"/>
+«Setter Property="Height" Valuez"auto"/>
+«Setter Property="Background" Value=@" (StaticResource akcent]"/>
+«Setter Property "Foreground" Value=O" (StaticResource nain)"/>
+«Setter Property="Fontsize Values 14"/
+<Setter Property="Fontweight" Value="Bold*/>
+«Setter Property="Margin" Value="3"/>
+«Setter Property="Padding" value="5"/>
+«Setter Property="Height" Value=™30"/>
+</Style»
+<!--стиль для меток TextBlock
+«Style TargetType="TextBlock"×:Key="base_textblock">
+«Setter Property="Height" Value="30"/>
+«Setter Property=*VerticalAlignment" Value= Stretch-/>
+«Setter Property="HorizontalAlignnent" value="Stretch"/>
+<Setter Property="Padding" Value='5*/>
+«Setter Property "Background" Value=* (StaticResource additional)"/>
+</Style>
+<!--стиль для меток TextBlock
+«Style TargetType="TextBlock" x:Key="item_textblock">
+«Setter Property="TextAlignment" Value="Center"/>
+«Setter Property= VerticalAlignment" Values Top*/>
+«Setter Property="Textirapping" Value="Wrap*/>
+«Setter Property="FontSize" Value="14"/>
+«Setter Property="Padding" Value="3"/> c/Style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 «Grids
 <! - Noresize - нужен, чтобы нельзя было изменить зааднные размеры окна-->
 «Grid.ColumnDefinitions>
