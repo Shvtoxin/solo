@@ -1,3 +1,56 @@
+«Grids
+<! - Noresize - нужен, чтобы нельзя было изменить зааднные размеры окна-->
+«Grid.ColumnDefinitions>
+<ColunnDefinition />
+</Grid.ColumnDefinitions>
+<Grid.RomDefinitions>
+«RowDefinition Height= 75'/>
+«RowDefinition Height="40"/>
+«RowDefinition Heighta"40"/>
+<RowDefinition/>
+</Grid.RomDefinitions>
+«Grid Background=@" (StaticResource additional) /›
+<Image Source="Resources/school_Logo.png"
+Margin="10"
+HorizontalAlignment="Left />
+<TextBlock Grid.Row="0" Text="Great Britain"
+HorizontalAlignment="Center' VerticalAlignnent="Center'
+Background D*(StaticResource addional)*
+FontSize=*20*
+Fontweighta"Bold" />
+«StackPanel Orientation="Horizontal" Grid.Rowa"1*>
+<TextBlock Styles* (StaticResource Item_textblock)"
+Grid.Row=*1"
+ext="Логин"
+Margin="20 0*
+VerticalAlignnent=*Center" width=*100"/>
+«TextBox :Nane="TbLogin"
+Grid. Colunn="1' width="200"/>
+</StackPanel»
+«StackPanel Orientation="Horizontal* Grid.Row=-2">
+<TextBlock Style=* (StaticResource item_textblock]"
+Grid.Row=*2" Grid.Colunn="0"
+Text="пароль" Margin=*20 0*
+VerticalAlignnent="Center" Midth="100^/>
+«PasswordBox x:Nane="TbPass" Height= 30° width= 200- />
+/StackPanel »
+«StackPanel Orientation="Horizontal" Grid.Row=*3" HorizontalAlignment="Center*>
+«Button Width= 100" Heighte"30*
+Contenterpun
+*:Nane="Btnok" click="BtnokClick"/>
+«Button Width="100"
+Heighten3g"
+Content="Отмена"
+*:Nane="BtnCancel-Clicka"BtnCancelClick"/>
+</StackPanel> c/Grid>
+
+
+
+
+
+
+
+
 сортировка + кнопка очистить 
 
 
