@@ -508,3 +508,795 @@ MessageBox.Show("Пользователь не найден");
 Con.Close();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+авторизация как у меня
+
+public partial class Login : Form
+    {
+        public Login()
+        {
+            InitializeComponent();
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void ClearTb_Click(object sender, EventArgs e)
+        {
+            RolCb.SelectedIndex = -1;
+            LogTb.Text = "";
+            PassTb.Text = "";
+        }
+        SqlConnection Con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CrmAutoschool;Connect Timeout=30;");
+        public static string Role;
+        private void LoginBtn_Click(object sender, EventArgs e)
+        {
+            if (RolCb.SelectedIndex == -1)
+            {
+                MessageBox.Show("Выберите вашу должность");
+            }
+            else if (RolCb.SelectedIndex == 0)
+            {
+                if (LogTb.Text == "" || PassTb.Text == "")
+                {
+                    MessageBox.Show("Введите имя и пароль");
+                }
+                else if (LogTb.Text == "Админ" && PassTb.Text == "491625")
+                {
+                    Role = "Sis-Admin";
+                    Teacher Obj = new Teacher();
+                    Obj.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Не верное имя или пароль");
+                }
+            }
+            else if (RolCb.SelectedIndex == 1)
+            {
+                if (LogTb.Text == "" || PassTb.Text == "")
+                {
+                    MessageBox.Show("Введите имя и пароль");
+                }
+                else
+                {
+                    Con.Open();
+                    SqlDataAdapter sda = new SqlDataAdapter("Select Count(*) from TeacherTbl where Teach_Name=N'" + LogTb.Text + "' and Teach_Pass='" + PassTb.Text + "'", Con);
+                    DataTable dt = new DataTable();
+                    sda.Fill(dt);
+                    if (dt.Rows[0][0].ToString() == "1")
+                    {
+                        Role = "Teacher";
+                        Abonement Obj = new Abonement();
+                        Obj.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Учитель не найден");
+                    }
+                    Con.Close();
+                }
+            }
+            else
+            {
+                if (LogTb.Text == "" || PassTb.Text == "")
+                {
+                    MessageBox.Show("Введите имя и пароль");
+                }
+                else
+                {
+                    Con.Open();
+                    SqlDataAdapter sda = new SqlDataAdapter("Select Count(*) from AdminTbl where AdminName=N'" + LogTb.Text + "' and AdminPass='" + PassTb.Text + "'", Con);
+                    DataTable dt = new DataTable();
+                    sda.Fill(dt);
+                    if (dt.Rows[0][0].ToString() == "1")
+                    {
+                        Role = "Admin";
+                        Home Obj = new Home();
+                        Obj.Show();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Администратор не найден");
+                    }
+                    Con.Close();
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+форма со всеми элементами 
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using Excel = Microsoft.Office.Interop.Excel;
+using Microsoft.Office.Interop.Excel;
+using System.Collections;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+using AutoAcademy;
+
+namespace CrmAutoAcademy
+{
+    public partial class Teacher : Form
+    {
+        private string Query = "Select * from TeacherTbl";
+        public Teacher()
+        {
+            InitializeComponent();
+            DisplayTeach(Query);
+        }
+        SqlConnection Con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CrmAutoschool;Connect Timeout=30;");
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+        private void DisplayTeach(string Query)
+        {
+            // получаем данные в DataSet через SqlDataAdapter
+            Con.Open();
+
+            SqlDataAdapter sda = new SqlDataAdapter(Query, Con);
+            SqlCommandBuilder builder = new SqlCommandBuilder(sda);
+            //создаем объект DataSet
+            var ds = new DataSet();
+            //заполняем DataSet
+            sda.Fill(ds);
+            //отображаем данные
+            TeacherDGV.DataSource = ds.Tables[0];
+            Con.Close();
+        }
+        private void Clear()
+        {
+            TNameTB.Text = "";
+            TKatCb.SelectedIndex = -1;
+            TeachDR.Text = "";
+            TPhoneTB.Text = "";
+            TPassTb.Text = "";
+            Key = 0;
+        }
+        int Key = 0;
+        private void AddBtn_Click(object sender, EventArgs e)
+        {
+            if (TNameTB.Text == "" || TPhoneTB.Text == "" || TPassTb.Text == "" || TKatCb.SelectedIndex == -1)
+            {
+                MessageBox.Show("Не заполнены обязательные поля!");
+            }
+            else
+            {
+                try
+                {
+                    Con.Open();
+                    SqlCommand cmd = new SqlCommand("insert into TeacherTbl(Teach_Name,Teach_Kat,Teach_Dr,Teach_Phone,Teach_Pass)values(@TN,@TK,@TD,@TP,@TPA)", Con);
+                    cmd.Parameters.AddWithValue("@TN", TNameTB.Text);
+                    cmd.Parameters.AddWithValue("@TK", TKatCb.SelectedItem.ToString());
+                    cmd.Parameters.AddWithValue("@TD", TeachDR.Value.Date);
+                    cmd.Parameters.AddWithValue("@TP", TPhoneTB.Text);
+                    cmd.Parameters.AddWithValue("@TPA", TPassTb.Text);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Учитель добавлен!");
+                    Con.Close();
+                    DisplayTeach(Query);
+                    Clear();
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show(Ex.Message);
+                }
+            }
+        }
+
+        private void TeacherDGV_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            TNameTB.Text = TeacherDGV.SelectedRows[0].Cells[1].Value.ToString();
+            TKatCb.SelectedItem = TeacherDGV.SelectedRows[0].Cells[2].Value.ToString();
+            TeachDR.Text = TeacherDGV.SelectedRows[0].Cells[3].Value.ToString();
+            TPhoneTB.Text = TeacherDGV.SelectedRows[0].Cells[4].Value.ToString();
+            TPassTb.Text = TeacherDGV.SelectedRows[0].Cells[5].Value.ToString();
+
+
+            if (TNameTB.Text == "")
+            {
+                Key = 0;
+            }
+            else
+            {
+                Key = Convert.ToInt32(TeacherDGV.SelectedRows[0].Cells[0].Value.ToString());
+
+            }
+        }
+
+        private void DelBtn_Click(object sender, EventArgs e)
+        {
+            if (Key == 0)
+            {
+                MessageBox.Show("Выберите пользователя!");
+            }
+            else
+            {
+                try
+                {
+                    Con.Open();
+                    SqlCommand cmd = new SqlCommand("Delete from TeacherTbl where Teach_Id=@RKey ", Con);
+                    cmd.Parameters.AddWithValue("@RKey", Key);
+                    cmd.ExecuteNonQuery();
+                    MessageBox.Show("Информация удалена!");
+                    Con.Close();
+                    DisplayTeach(Query);
+                    Clear();
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show(Ex.Message);
+                }
+            }
+        }
+
+        private void EditBtn_Click(object sender, EventArgs e)
+        {
+            if (Key == 0)
+            {
+                MessageBox.Show("Не выбран пользователь или он не добавлен!");
+            }
+            else
+            {
+
+
+                if (TNameTB.Text == "" || TPhoneTB.Text == "" || TPassTb.Text == "" || TKatCb.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Не заполнены обязательные поля!");
+                }
+                else
+                {
+                    try
+                    {
+                        Con.Open();
+                        SqlCommand cmd = new SqlCommand("update TeacherTbl set Teach_Name=@TN,Teach_Kat=@TK,Teach_Dr=@TD,Teach_Phone=@TP,Teach_Pass=@TPA where Teach_Id=@RKey", Con);
+                        cmd.Parameters.AddWithValue("@TN", TNameTB.Text);
+                        cmd.Parameters.AddWithValue("@TK", TKatCb.SelectedItem.ToString());
+                        cmd.Parameters.AddWithValue("@TD", TeachDR.Value.Date);
+                        cmd.Parameters.AddWithValue("@TP", TPhoneTB.Text);
+                        cmd.Parameters.AddWithValue("@TPA", TPassTb.Text);
+                        cmd.Parameters.AddWithValue("@RKey", Key);
+                        cmd.ExecuteNonQuery();
+                        MessageBox.Show("Информация обновлена!");
+                        Con.Close();
+                        DisplayTeach(Query);
+                        Clear();
+                    }
+                    catch (Exception Ex)
+                    {
+                        MessageBox.Show(Ex.Message);
+                    }
+                }
+            }
+        }
+
+        private Excel.Application GetExcel()
+        {
+            Excel.Application xlApp;
+            Worksheet xlSheet;
+            xlApp = new Excel.Application();
+            Excel.Workbook wBook;
+            wBook = xlApp.Workbooks.Add();
+            xlApp.Columns.ColumnWidth = 15;
+            xlSheet = wBook.Sheets[1];
+            xlSheet.Name = "Учителя";
+            xlSheet.Cells.HorizontalAlignment = 3;
+            for (int j = 1; j < TeacherDGV.Columns.Count + 1; j++)
+            {
+                xlApp.Cells[1, j] = TeacherDGV.Columns[j - 1].HeaderText;
+            }
+            return xlApp;
+        }
+
+
+        private void ExpBtn_Click(object sender, EventArgs e)
+        {
+            switch (MessageBox.Show("Экспортировать все?", "Справка", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question))
+            {
+                case DialogResult.Yes:
+                    {
+                        var xlApp = GetExcel();
+                        for (int i = 0; i < TeacherDGV.Rows.Count; i++)
+                        {
+                            for (int j = 0; j < TeacherDGV.Columns.Count; j++)
+                            {
+                                xlApp.Cells[i + 2, j + 1] = TeacherDGV.Rows[i].Cells[j].Value.ToString();
+                            }
+                        }
+                        xlApp.Visible = true;
+                        break;
+                    };
+
+                case DialogResult.No:
+                    {
+                        var xlApp = GetExcel();
+                        for (int i = 0; i < TeacherDGV.SelectedRows.Count - 1; i++)
+                        {
+                            for (int j = 0; j < TeacherDGV.Columns.Count; j++)
+                            {
+                                xlApp.Cells[i + 2, j + 1] = TeacherDGV.SelectedRows[i].Cells[j].Value.ToString();
+                            }
+                        }
+                        xlApp.Visible = true;
+                        break;
+                    };
+
+                case DialogResult.Cancel:
+                    return;
+            }
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < TeacherDGV.RowCount; i++)
+            {
+                for (int j = 0; j < TeacherDGV.ColumnCount; j++)
+                {
+                    TeacherDGV[j, i].Style.BackColor = Color.White;
+                    TeacherDGV[j, i].Style.ForeColor = Color.Black;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                TeacherDGV.ClearSelection();
+                for (int i = 0; i < TeacherDGV.RowCount - 1; i++)
+                {
+                    for (int j = 0; j < TeacherDGV.ColumnCount; j++)
+                    {
+                        if (TeacherDGV[j, i].Value.ToString().ToLower().Contains(textBox1.Text.ToLower()))
+                        {
+                            TeacherDGV[j, i].Style.BackColor = Color.Black;
+                            TeacherDGV[j, i].Style.ForeColor = Color.White;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonSort_Click(object sender, EventArgs e)
+        {
+            var COL = new System.Windows.Forms.DataGridViewColumn();
+
+            switch (comboBox1.SelectedItem.ToString())
+            {
+                case "Имя":
+                    COL = TeacherDGV.Columns["Teach_Name"];
+                    break;
+                case "Дата рождения":
+                    COL = TeacherDGV.Columns["Teach_Dr"];
+                    break;
+                case "Категории":
+                    COL = TeacherDGV.Columns["Teach_Kat"];
+                    break;
+
+            }
+            if (radioButtonUp.Checked)
+            {
+                TeacherDGV.Sort(COL, System.ComponentModel.ListSortDirection.Ascending);
+            }
+            else
+            {
+                TeacherDGV.Sort(COL, System.ComponentModel.ListSortDirection.Descending);
+            }
+        }
+
+        private void BtnSbros_Click(object sender, EventArgs e)
+        {
+            DisplayTeach(Query);
+            buttonSort.Enabled = true;
+        }
+
+        private void BtnFiltr_Click(object sender, EventArgs e)
+        {
+            DisplayTeach(Query + " where Teach_Kat=N'" + comboBox2.SelectedItem.ToString() + "'");
+            buttonSort.Enabled = false;
+        }
+
+        private void HomeTb_Click(object sender, EventArgs e)
+        {
+            Home obj = new Home();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void TeachTb_Click(object sender, EventArgs e)
+        {
+            Teacher obj = new Teacher();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void StudTb_Click(object sender, EventArgs e)
+        {
+            Students obj = new Students();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void AdminTb_Click(object sender, EventArgs e)
+        {
+            Admin obj = new Admin();
+            obj.Show();
+            this.Hide();
+
+        }
+
+        private void UslugTb_Click(object sender, EventArgs e)
+        {
+            Usluga obj = new Usluga();
+            obj.Show();
+        }
+
+        private void AboutTb_Click(object sender, EventArgs e)
+        {
+            About obj = new About();
+            obj.Show();
+        }
+
+        private void logoutTb_Click(object sender, EventArgs e)
+        {
+            Login obj = new Login();
+            obj.Show();
+            this.Hide();
+        }
+    }
+}
+
+
+
+
+
+
+
+код для таблицы с обьединениями
+CREATE TABLE [dbo].[AbonementTbl] (
+    [Abonem_Id]  INT           IDENTITY (500, 1) NOT NULL,
+    [Stud_id]    INT           NOT NULL,
+    [Stud_Name]  NVARCHAR (50) NOT NULL,
+    [Teach_id]   INT           NOT NULL,
+    [Teach_Name] NVARCHAR (50) NOT NULL,
+    [Stud_vid]   NVARCHAR (50) NOT NULL,
+    [Stud_avto]  NVARCHAR (50) NOT NULL,
+    [Id_Uslug]   INT           NOT NULL,
+    [Name_Us]    NVARCHAR (50) NOT NULL,
+    [Cost_Us]    NVARCHAR (50) NOT NULL,
+    PRIMARY KEY CLUSTERED ([Abonem_Id] ASC),
+    CONSTRAINT [FK2] FOREIGN KEY ([Teach_id]) REFERENCES [dbo].[TeacherTbl] ([Teach_Id]),
+    CONSTRAINT [FK3] FOREIGN KEY ([Id_Uslug]) REFERENCES [dbo].[UslugTbl] ([Id_Uslug]),
+    CONSTRAINT [FK1] FOREIGN KEY ([Stud_id]) REFERENCES [dbo].[StudTbl] ([Stud_Id])
+);
+
+
+
+
+код формы с обьединеными данными 
+
+using AutoAcademy;
+using DocumentFormat.OpenXml.Office2010.PowerPoint;
+using DocumentFormat.OpenXml.Office2016.Drawing.Charts;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace CrmAutoAcademy
+{
+    public partial class Abonement : Form
+    {
+        public Abonement()
+        {
+            InitializeComponent();
+            DisplayAbon();
+            if (Login.Role == "Teacher")
+            {
+                AdminTb.Enabled = false;
+                TeachTb.Enabled = false;
+                StudTb.Enabled = false;
+            }
+            GetUslugaId();
+            GetStudId();
+            GetTeachId();
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+
+        }
+        int Key = 0;
+        SqlConnection Con = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=CrmAutoschool;Connect Timeout=30;");
+
+        private void GetTeachName()
+        {
+            Con.Open();
+            string Query = "Select * from TeacherTbl where Teach_Id=" + TeachIdCb.SelectedValue.ToString() + "";
+            SqlCommand cmd = new SqlCommand(Query, Con);
+            DataTable dt = new DataTable();
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(dt);
+            foreach (DataRow dr in dt.Rows)
+            {
+                NameTeach.Text = dr["Teach_Name"].ToString();
+            }
+            Con.Close();
+        }
+        private void GetStudName()
+        {
+            Con.Open();
+            string Query = "Select * from StudTbl where Stud_Id=" + StudIdCb.SelectedValue.ToString() + "";
+            SqlCommand cmd = new SqlCommand(Query, Con);
+            DataTable dt = new DataTable();
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(dt);
+            foreach (DataRow dr in dt.Rows)
+            {
+                NameStud.Text = dr["Stud_Name"].ToString();
+                VidCb.Text = dr["Stud_vid"].ToString();
+                AvtoCb.Text = dr["Stud_avto"].ToString();
+            }
+            Con.Close();
+        }
+        private void GetUslugaName()
+        {
+            Con.Open();
+            string Query = "Select * from UslugTbl where Id_Uslug=" + UslugaId.SelectedValue.ToString() + "";
+            SqlCommand cmd = new SqlCommand(Query, Con);
+            DataTable dt = new DataTable();
+            SqlDataAdapter sda = new SqlDataAdapter(cmd);
+            sda.Fill(dt);
+            foreach (DataRow dr in dt.Rows)
+            {
+                NameUs.Text = dr["Name_Us"].ToString();
+                UsCost.Text = dr["Cost_Us"].ToString();
+            }
+            Con.Close();
+        }
+        private void GetTeachId()
+        {
+            //получаем все id 
+            Con.Open();
+            SqlCommand cmd = new SqlCommand("Select Teach_Id from TeacherTbl", Con);
+            SqlDataReader rdr;
+            // для получения строк из источника данных. 
+            rdr = cmd.ExecuteReader();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Teach_Id", typeof(int));
+            dt.Load(rdr);
+            //фактическое значение
+            TeachIdCb.ValueMember = "Teach_Id";
+            //задаем в комбобокс
+            TeachIdCb.DataSource = dt;
+            Con.Close();
+        }
+        private void GetStudId()
+        {
+            Con.Open();
+            SqlCommand cmd = new SqlCommand("Select Stud_Id from StudTbl", Con);
+            SqlDataReader rdr;
+            rdr = cmd.ExecuteReader();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Stud_Id", typeof(int));
+            dt.Load(rdr);
+            StudIdCb.ValueMember = "Stud_Id";
+            StudIdCb.DataSource = dt;
+            Con.Close();
+        }
+        private void GetUslugaId()
+        {
+            Con.Open();
+            SqlCommand cmd = new SqlCommand("Select Id_Uslug from UslugTbl", Con);
+            SqlDataReader rdr;
+            rdr = cmd.ExecuteReader();
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Id_Uslug", typeof(int));
+            dt.Load(rdr);
+            UslugaId.ValueMember = "Id_Uslug";
+            UslugaId.DataSource = dt;
+            Con.Close();
+        }
+        private void Clear()
+        {
+
+            NameStud.Text = "";
+            NameTeach.Text = "";
+            StudIdCb.SelectedIndex = -1;
+            TeachIdCb.SelectedIndex = -1;
+            VidCb.SelectedIndex = -1;
+            AvtoCb.SelectedIndex = -1;
+            Key = 0;
+        }
+        private void DisplayAbon()
+        {
+            Con.Open();
+            string Query = "Select * from AbonementTbl";
+            SqlDataAdapter sda = new SqlDataAdapter(Query, Con);
+            SqlCommandBuilder builder = new SqlCommandBuilder(sda);
+            var ds = new DataSet();
+            sda.Fill(ds);
+            AbonDGV.DataSource = ds.Tables[0];
+            Con.Close();
+        }
+
+        private void AddBtn_Click(object sender, EventArgs e)
+        {
+            if (StudTb.Text == "" || TeachTb.Text == "" || NameUs.Text == "")
+            {
+                MessageBox.Show("Заполните все поля");
+            }
+            else
+            {
+                //отлавливаем ошибку
+                try
+                {
+                    //открываем подключение
+                    Con.Open();
+                    //создаем команду для добавления
+                    SqlCommand cmd = new SqlCommand("insert into AbonementTbl(Stud_id,Stud_Name,Teach_id,Teach_Name,Stud_vid,Stud_avto,Id_Uslug,Name_Us,Cost_Us)values(@SI,@SN,@TI,@TN,@SV,@SA,@IU,@NU,@CU)", Con);
+                    //добавляем значения в строку
+                    cmd.Parameters.AddWithValue("@SI", StudIdCb.SelectedValue.ToString());
+                    cmd.Parameters.AddWithValue("@SN", NameStud.Text);
+                    cmd.Parameters.AddWithValue("@TI", TeachIdCb.SelectedValue.ToString());
+                    cmd.Parameters.AddWithValue("@TN", NameTeach.Text);
+                    cmd.Parameters.AddWithValue("@SV", VidCb.Text);
+                    cmd.Parameters.AddWithValue("@SA", AvtoCb.Text);
+                    cmd.Parameters.AddWithValue("@IU", UslugaId.SelectedValue.ToString());
+                    cmd.Parameters.AddWithValue("@NU", NameUs.Text);
+                    cmd.Parameters.AddWithValue("@CU", UsCost.Text);
+
+                    cmd.ExecuteNonQuery();
+                    // выполняет sql-выражение и возвращает количество измененных записей.
+                    MessageBox.Show("отчет добавлен");
+                    //закрываем подключение
+                    Con.Close();
+                    DisplayAbon();
+                    Clear();
+                }
+                catch (Exception err)
+                {
+                    //показываем ошибку
+                    MessageBox.Show(err.Message);
+                }
+
+            }
+        }
+
+        private void StudIdCb_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            GetStudName();
+        }
+
+        private void TeachIdCb_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            GetTeachName();
+        }
+
+        private void UslugaId_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            GetUslugaName();
+        }
+
+        private void AbonDGV_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            AbonSumTxt.Text = "";
+            AbonSumTxt.Text = "                         Автошкола Движение    \n\n" +
+                "\n\n                              Абонемент                 " +
+                "\n*******************************************************************************\n" +
+                "\n" + DateTime.Today.Date + "\n\n\n\n                                                         " +
+                "\n         Учитель: " + AbonDGV.SelectedRows[0].Cells[4].Value.ToString() + "\n\n                    " +
+                "\n         Студент: " + AbonDGV.SelectedRows[0].Cells[2].Value.ToString() + "\n\n                    " +
+                "\n         Услуга: " + AbonDGV.SelectedRows[0].Cells[8].Value.ToString() + "\n\n                     " +
+                "\n         Вид обучения: " + AbonDGV.SelectedRows[0].Cells[5].Value.ToString() + "\n\n               " +
+                "\n         Автомобиль: " + AbonDGV.SelectedRows[0].Cells[6].Value.ToString() + "\n\n                 " +
+                "\n         Стоимость: " + AbonDGV.SelectedRows[0].Cells[9].Value.ToString() + " Руб.\n\n\n\n              ";
+
+
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (printPreviewDialog1.ShowDialog() == DialogResult.OK)
+            {
+                printDocument1.Print();
+            }
+        }
+        private void printDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
+        {
+            e.Graphics.DrawString(AbonSumTxt.Text + "\n", new Font("Arial", 18, FontStyle.Regular), Brushes.Black, new Point(98, 80));
+
+        }
+        private void HomeTb_Click(object sender, EventArgs e)
+        {
+            Home obj = new Home();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void TeachTb_Click(object sender, EventArgs e)
+        {
+            Teacher obj = new Teacher();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void StudTb_Click(object sender, EventArgs e)
+        {
+            Students obj = new Students();
+            obj.Show();
+            this.Hide();
+        }
+
+        private void AdminTb_Click(object sender, EventArgs e)
+        {
+            Admin obj = new Admin();
+            obj.Show();
+            this.Hide();
+
+        }
+
+        private void UslugTb_Click(object sender, EventArgs e)
+        {
+            Usluga obj = new Usluga();
+            obj.Show();
+        }
+
+        private void AboutTb_Click(object sender, EventArgs e)
+        {
+            About obj = new About();
+            obj.Show();
+        }
+
+        private void logoutTb_Click(object sender, EventArgs e)
+        {
+            Login obj = new Login();
+            obj.Show();
+            this.Hide();
+        }
+    }
+}
